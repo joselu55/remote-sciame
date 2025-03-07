@@ -1,0 +1,129 @@
+:root {
+    --color-success: rgb(0, 255, 0);
+    --color-danger: red;
+    --color-warnning: yellow;
+    --color-disable: rgb(204, 204, 204);
+
+    --color-success-light: hsl(120, 100%, 60%);
+    --color-danger-light: hsl(0, 100%, 60%);
+    --color-warnning-light: hsl(60, 100%, 60%);
+    --color-disable-light: hsl(0, 0%, 85%);
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    transition: all 0.5s;
+}
+
+
+body {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background-color: white;
+}
+
+
+h1 {
+    margin: 1em;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    padding: 1.5em;
+    background-color: hsl(0, 0%, 90%);
+    border-style: solid;
+    border-color: rgba(245, 245, 245, 0.66);
+    border-width: 2px;
+
+    border-radius: 1.5em;
+
+    font-size: medium;
+}
+
+form.disabled {
+    opacity: 0.5;
+}
+form.disabled * {
+    pointer-events: none;
+    user-select: none;
+}
+
+form input {
+    padding: 0.5em 1em;
+    margin: 0.5em;
+    border-radius: 0.5em;
+}
+
+
+hr {
+    width: 100%;
+    border-style: solid;
+    border-width: 0px;
+    border-top-width: 1px;
+    color: whitesmoke;
+    margin: 0.5em;
+}
+
+
+button {
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+    font-size: medium;
+}
+
+
+div {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+}
+
+
+connection-status, lock-switch {
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+    margin-left: 1em;
+
+    user-select: none;
+}
+
+lock-switch.locked {
+    background-color: var(--color-success);
+}
+lock-switch.unlocked {
+    background-color: var(--color-warnning);
+}
+lock-switch.dead, lock-switch.switching {
+    background-color: var(--color-disable);
+}
+
+
+lock-switch.locked:hover {
+    background-color: var(--color-success-light);
+}
+lock-switch.unlocked:hover {
+    background-color: var(--color-warnning-light);
+}
+
+
+
+lock-switch.locked:hover, lock-switch.unlocked:hover {
+    scale: 1.05;
+}

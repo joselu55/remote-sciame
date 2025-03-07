@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consola</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/control/ConnectionStatus.js"></script>
+    <script src="/control/LockSwitch.js"></script>
+    <script type="module" src="/control/script.js"></script>
+</head>
+<body>
+    <h1>Consola</h1>
+
+    <form class="disabled">
+        <h3>Modulo 1</h3>
+        <hr>
+        <div>
+            <label for="state">Estado: </label>
+            <connection-status name="state"></connection-status>
+        </div>
+        <hr>
+        <div>
+            <label for="state">Cerradura: </label>
+            <lock-switch name="state"></lock-switch>
+        </div>
+    </form>
+</body>
+</html>
