@@ -1,6 +1,6 @@
-import express from "express";
-import expressWs from "express-ws";
-import cookieParser from "cookie-parser";
+const express = require("express");
+const expressWs = require("express-ws");
+const cookieParser = require("cookie-parser");
 
 const PORT = 8080;
 const app = express();
@@ -29,6 +29,8 @@ const users = {
         ]
     }
 };
+
+const rtcConnections = [];
 
 let modules = {
     "pedrito": {
@@ -101,10 +103,11 @@ app.get("/authentication", (req, res) => {
 app.use('/control', authCheckMiddle, express.static('control'));
 
 
-app.ws("/rtc", (ws, req) => {
+app.ws("/rtc/users", (ws, req) => {
     const user = authCheck(req);
 
     if (user) {
+        rtcConnections.push(ws);
         console.log("New real time connection request from: ", user);
 
         ws.send(JSON.stringify({
@@ -115,10 +118,24 @@ app.ws("/rtc", (ws, req) => {
         ws.on("message", msg => {
             const data = JSON.parse(msg);
             modules = data.modules;
+
+            const i = rtcConnections.indexOf(ws);
+            for (let j = 0; j < rtcConnections.length; j++) {
+                if (i != j) {
+                    rtcConnections[j].send(JSON.stringify({
+                        subject: "update",
+                        modules: modules
+                    }));
+                } 
+            }
         })
 
         ws.on("close", () => {
             console.log(`connection with ${user} ended!!`)
+
+            const i = rtcConnections.indexOf(ws);
+            if (i > -1) rtcConnections.splice(i, 1);
+            
         })
     } else {
         ws.close(1008, "");

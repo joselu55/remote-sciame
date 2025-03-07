@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "remote manager",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "dev": "node --watch index.js",
     "start": "node index.js",

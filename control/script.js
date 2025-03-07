@@ -25,7 +25,7 @@ function updateUI() {
 }
 
 function connectWebSocket() {
-    ws = new WebSocket("/rtc");
+    ws = new WebSocket("/rtc/users");
 
     ws.addEventListener("open", () => {
         console.log("Conexión establecida");
