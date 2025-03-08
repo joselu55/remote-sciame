@@ -35,7 +35,7 @@ const rtcConnections = [];
 let modules = {
     "pedrito": {
         token: "kiikj34ij3i4o3k4jo03f0o3f340fkf4330",
-        online: true,
+        online: false,
         functions: {
             doorLock: {
                 locked: false,
@@ -43,6 +43,8 @@ let modules = {
         }
     }
 }
+
+const rtcModulesConnections = {};
 
 function findUserByToken(token) {
     for (const username in users) {
@@ -100,8 +102,11 @@ app.get("/authentication", (req, res) => {
     else res.sendStatus(403);
 })
 
-app.use('/control', authCheckMiddle, express.static('control'));
+app.use("/control", authCheckMiddle, express.static("control"));
 
+app.post("/module-port", (req, res) => {
+
+});
 
 app.ws("/rtc/users", (ws, req) => {
     const user = authCheck(req);
@@ -128,6 +133,12 @@ app.ws("/rtc/users", (ws, req) => {
                     }));
                 } 
             }
+
+            if (rtcModulesConnections["pedrito"]) {
+                if (modules["pedrito"].functions.doorLock.locked == null) {
+                    rtcModulesConnections["pedrito"].send("doorlock switch");
+                }
+            }
         })
 
         ws.on("close", () => {
@@ -142,11 +153,50 @@ app.ws("/rtc/users", (ws, req) => {
         return;
     }
 
-})
+});
+
+app.ws("/rtc/modules", (ws, req) => {
+    console.log("Module connected!!")
+    rtcModulesConnections["pedrito"] = ws;
+
+    modules["pedrito"].online = true;
+    for (let j = 0; j < rtcConnections.length; j++) {
+        rtcConnections[j].send(JSON.stringify({
+            subject: "update",
+            modules: modules
+        }));
+    }
+
+    ws.on("message", msg => {
+        const data = JSON.parse(msg);
+        console.log("Message from module: ", data);
+
+        modules["pedrito"].functions.doorLock.locked = data.doorLocked;
+        for (let j = 0; j < rtcConnections.length; j++) {
+            rtcConnections[j].send(JSON.stringify({
+                subject: "update",
+                modules: modules
+            }));
+        }
+    })
+
+    ws.on("close", () => {
+        console.log(`connection with ${"pedrito"} ended!!`)
+
+        modules["pedrito"].online = false;
+        for (let j = 0; j < rtcConnections.length; j++) {
+            rtcConnections[j].send(JSON.stringify({
+                subject: "update",
+                modules: modules
+            }));
+        }
+    })
+});
 
 app.listen(
     PORT,
+    "0.0.0.0",
     () => {
-        console.log(`Server listen at http://localhost:${PORT}`)
+        console.log(`Server listen at http://localhost:${PORT}`,)
     },
 )
