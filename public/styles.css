@@ -110,8 +110,12 @@ lock-switch.locked {
 lock-switch.unlocked {
     background-color: var(--color-warnning);
 }
-lock-switch.dead, lock-switch.switching {
+lock-switch.switching {
     background-color: var(--color-disable);
+}
+lock-switch.undefined {
+    background-color: var(--color-danger);
+    color: white;
 }
 
 

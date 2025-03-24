@@ -5,7 +5,7 @@ class LockSwitch extends HTMLElement {
 
     resetClassList() {
         this.classList.remove("unlocked");
-        this.classList.remove("dead");
+        this.classList.remove("undefined");
         this.classList.remove("locked");
         this.classList.remove("switching");
     }
@@ -28,14 +28,14 @@ class LockSwitch extends HTMLElement {
         this.classList.add("switching");
     }
 
-    setDead() {
-        this.textContent = "Dead";
+    setUndefined() {
+        this.textContent = "Undefined";
         this.resetClassList();
-        this.classList.add("dead");
+        this.classList.add("undefined");
     }
 
     connectedCallback() {
-        this.setDead();
+        this.setUndefined();
     }
 
     disconnectedCallback() {

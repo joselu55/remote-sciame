@@ -32,15 +32,13 @@ const users = {
 
 const rtcConnections = [];
 
+let STATE_KEYS = ["UNDEFINED", "SWITCHING", "LOCKED", "UNLOCKED"];
+
 let modules = {
     "pedrito": {
-        token: "kiikj34ij3i4o3k4jo03f0o3f340fkf4330",
+        key: "PdM4jBdLYKh8qX25fcLPlWCQ",
         online: false,
-        functions: {
-            doorLock: {
-                locked: false,
-            }
-        }
+        state: STATE_KEYS[0]
     }
 }
 
@@ -134,9 +132,13 @@ app.ws("/rtc/users", (ws, req) => {
                 } 
             }
 
+            console.log("trying to send update to modules...");
             if (rtcModulesConnections["pedrito"]) {
-                if (modules["pedrito"].functions.doorLock.locked == null) {
-                    rtcModulesConnections["pedrito"].send("doorlock switch");
+                console.log("pedrito: ");
+                const currentState = modules["pedrito"].state;
+                if (currentState == "SWITCHING") {
+                    rtcModulesConnections["pedrito"].send("do switch");
+                    console.log("   SEND OK!!");
                 }
             }
         })
@@ -155,41 +157,40 @@ app.ws("/rtc/users", (ws, req) => {
 
 });
 
-app.ws("/rtc/modules", (ws, req) => {
-    console.log("Module connected!!")
-    rtcModulesConnections["pedrito"] = ws;
-
-    modules["pedrito"].online = true;
+function updateClientData() {
     for (let j = 0; j < rtcConnections.length; j++) {
         rtcConnections[j].send(JSON.stringify({
             subject: "update",
             modules: modules
         }));
     }
+}
+
+app.ws("/rtc/modules", (ws, req) => {
+    let moduleID;
 
     ws.on("message", msg => {
-        const data = JSON.parse(msg);
-        console.log("Message from module: ", data);
 
-        modules["pedrito"].functions.doorLock.locked = data.doorLocked;
-        for (let j = 0; j < rtcConnections.length; j++) {
-            rtcConnections[j].send(JSON.stringify({
-                subject: "update",
-                modules: modules
-            }));
+        const data = msg.split("-");
+        console.log(`   raw message: `, msg);
+        moduleID = data[0];
+        if (!rtcModulesConnections[moduleID]) rtcModulesConnections[moduleID] = ws;
+        if (modules[moduleID].key != data[1]) {
+            ws.close(1008, "");
+            return;
         }
+        modules[moduleID].state = STATE_KEYS[parseInt(data[2])];
+        modules[moduleID].online = true;
+        updateClientData();
     })
 
     ws.on("close", () => {
-        console.log(`connection with ${"pedrito"} ended!!`)
+        console.log(`connection with ${moduleID} ended!!`)
 
-        modules["pedrito"].online = false;
-        for (let j = 0; j < rtcConnections.length; j++) {
-            rtcConnections[j].send(JSON.stringify({
-                subject: "update",
-                modules: modules
-            }));
-        }
+        modules[moduleID].online = false;
+        rtcModulesConnections[moduleID] = null;
+        
+        updateClientData();
     })
 });
 

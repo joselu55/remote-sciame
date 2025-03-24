@@ -5,7 +5,7 @@ const lockSwitch = moduleForm.querySelector("lock-switch");
 let modules, ws;
 
 lockSwitch.addEventListener("click", () => {
-    modules["pedrito"].functions.doorLock.locked = null;
+    modules["pedrito"].state = "SWITCHING";
     updateUI();
 
     ws.send(JSON.stringify({
@@ -16,12 +16,14 @@ lockSwitch.addEventListener("click", () => {
 
 function updateUI() {
     const online = modules["pedrito"].online;
-    const locked = modules["pedrito"].functions.doorLock.locked;
+    const state = modules["pedrito"].state;
     if (online) connectionStatus.setOnline();
-    if (locked != null) {
-        if (locked) lockSwitch.setLocked();
-        else lockSwitch.setUnlocked();
-    } else lockSwitch.setSwitching();
+    if (state != null) {
+        if (state == "UNDEFINED") lockSwitch.setUndefined();
+        else if (state == "SWITCHING") lockSwitch.setSwitching();
+        else if (state == "LOCKED") lockSwitch.setLocked();
+        else if (state == "UNLOCKED") lockSwitch.setUnlocked();
+    } else lockSwitch.setUndefined();
 }
 
 function connectWebSocket() {
