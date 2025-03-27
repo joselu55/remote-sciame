@@ -8,6 +8,11 @@
     --color-danger-light: hsl(0, 100%, 60%);
     --color-warnning-light: hsl(60, 100%, 60%);
     --color-disable-light: hsl(0, 0%, 85%);
+
+    --color-success-dark: hsl(120, 100%, 40%);
+    --color-danger-dark: hsl(0, 100%, 40%);
+    --color-warnning-dark: hsl(60, 100%, 40%);
+    --color-disable-dark: hsl(0, 0%, 55%);
 }
 
 
@@ -104,17 +109,22 @@ connection-status, lock-switch {
     user-select: none;
 }
 
+lock-switch.switching, lock-switch.undefined {
+    pointer-events: none;
+}
+
 lock-switch.locked {
-    background-color: var(--color-success);
+    background-color: var(--color-success-dark);
 }
 lock-switch.unlocked {
-    background-color: var(--color-warnning);
+    background-color: var(--color-warnning-dark);
 }
 lock-switch.switching {
-    background-color: var(--color-disable);
+    background-color: var(--color-disable-dark);
+    color: white;
 }
 lock-switch.undefined {
-    background-color: var(--color-danger);
+    background-color: var(--color-danger-dark);
     color: white;
 }
 

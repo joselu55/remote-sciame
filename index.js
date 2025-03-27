@@ -120,8 +120,8 @@ app.ws("/rtc/users", (ws, req) => {
 
         ws.on("message", msg => {
             const data = JSON.parse(msg);
-            modules = data.modules;
-
+            
+/*
             const i = rtcConnections.indexOf(ws);
             for (let j = 0; j < rtcConnections.length; j++) {
                 if (i != j) {
@@ -131,14 +131,15 @@ app.ws("/rtc/users", (ws, req) => {
                     }));
                 } 
             }
-
-            console.log("trying to send update to modules...");
+*/
             if (rtcModulesConnections["pedrito"]) {
-                console.log("pedrito: ");
+                const newState = data.modules["pedrito"].state;
                 const currentState = modules["pedrito"].state;
-                if (currentState == "SWITCHING") {
-                    rtcModulesConnections["pedrito"].send("do switch");
-                    console.log("   SEND OK!!");
+                if (newState == "SWITCHING") {
+                    if (currentState == "LOCKED" || currentState == "UNLOCKED") {
+                        rtcModulesConnections["pedrito"].send("do switch");
+                        console.log("   SEND OK!!");
+                    }
                 }
             }
         })
