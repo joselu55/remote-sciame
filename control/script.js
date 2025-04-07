@@ -1,10 +1,20 @@
 const moduleForm = document.querySelector("form");
-const connectionStatus = moduleForm.querySelector("connection-status");
-const lockSwitch = moduleForm.querySelector("lock-switch");
+const onlineDisplay = document.getElementById("online-display");
+const closedDoorDisplay = document.getElementById("closed-door-display");
+const openRequestDisplay = document.getElementById("open-request-display");
+const lockSwitch = document.querySelector("lock-switch");
 
 let modules, ws;
 
 lockSwitch.addEventListener("click", () => {
+    const willBeSent = 
+        onlineDisplay.getValue() &&
+        closedDoorDisplay.getValue() &&
+        openRequestDisplay.getValue()
+    ;
+
+    if (!willBeSent) return;
+
     modules["pedrito"].state = "SWITCHING";
     updateUI();
 
@@ -12,12 +22,24 @@ lockSwitch.addEventListener("click", () => {
         subject: "update",
         modules: modules,
     }))
+
 });
 
 function updateUI() {
     const online = modules["pedrito"].online;
+    const closedDoor = modules["pedrito"].closedDoor;
+    const openRequest = modules["pedrito"].openRequest;
     const state = modules["pedrito"].state;
-    if (online) connectionStatus.setOnline();
+
+    if (online) onlineDisplay.setTrue();
+    else onlineDisplay.setFalse();
+
+    if (closedDoor) closedDoorDisplay.setTrue();
+    else closedDoorDisplay.setFalse();
+
+    if (openRequest) openRequestDisplay.setTrue();
+    else openRequestDisplay.setFalse();
+
     if (state != null) {
         if (state == "UNDEFINED") lockSwitch.setUndefined();
         else if (state == "SWITCHING") lockSwitch.setSwitching();

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consola</title>
     <link rel="stylesheet" href="/styles.css">
-    <script src="/control/ConnectionStatus.js"></script>
+    <script src="/control/BooleanDisplay.js"></script>
     <script src="/control/LockSwitch.js"></script>
     <script type="module" src="/control/script.js"></script>
 </head>
@@ -16,13 +16,44 @@
         <h3>Módulo 1</h3>
         <hr>
         <div>
-            <label for="state">Conexión: </label>
-            <connection-status name="state"></connection-status>
+            <label for="online">
+                En línea: 
+            </label>
+            <boolean-display 
+                id="online-display"
+                name="online"
+            >
+            </boolean-display>
         </div>
         <hr>
         <div>
-            <label for="state">Estado: </label>
-            <lock-switch name="state"></lock-switch>
+            <label for="closed-door">
+                Puerta cerrada: 
+            </label>
+            <boolean-display 
+                id="closed-door-display"
+                name="closed-door"
+            >
+            </boolean-display>
+        </div>
+        <hr>
+        <div>
+            <label for="open-request">
+                Solicitud de apertura: 
+            </label>
+            <boolean-display 
+                id="open-request-display"
+                name="open-request"
+            >
+            </boolean-display>
+        </div>
+        <hr>
+        <div>
+            <label for="state">
+                Estado: 
+            </label>
+            <lock-switch name="state">
+            </lock-switch>
         </div>
     </form>
 </body>

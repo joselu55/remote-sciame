@@ -38,6 +38,8 @@ let modules = {
     "pedrito": {
         key: "PdM4jBdLYKh8qX25fcLPlWCQ",
         online: false,
+        closedDoor: false,
+        openRequest: true,
         state: STATE_KEYS[0]
     }
 }
@@ -135,11 +137,22 @@ app.ws("/rtc/users", (ws, req) => {
             if (rtcModulesConnections["pedrito"]) {
                 const newState = data.modules["pedrito"].state;
                 const currentState = modules["pedrito"].state;
-                if (newState == "SWITCHING") {
-                    if (currentState == "LOCKED" || currentState == "UNLOCKED") {
-                        rtcModulesConnections["pedrito"].send("do switch");
-                        console.log("   SEND OK!!");
-                    }
+                const openRequest = modules["pedrito"].openRequest;
+                const closedDoor = modules["pedrito"].closedDoor;
+
+                if (
+                    newState == "SWITCHING" && 
+                    currentState == "LOCKED" && 
+                    openRequest &&
+                    closedDoor
+                ) {
+                    rtcModulesConnections["pedrito"].send("do switch");
+                    console.log("UNLOCK MESSAGE SENDT!!");
+                } else {
+                    ws.send(JSON.stringify({
+                        subject: "update",
+                        modules: modules
+                    }));
                 }
             }
         })
@@ -181,11 +194,14 @@ app.ws("/rtc/modules", (ws, req) => {
             return;
         }
         modules[moduleID].state = STATE_KEYS[parseInt(data[2])];
+        modules[moduleID].closedDoor = STATE_KEYS[parseInt(data[3])];
+        modules[moduleID].openRequest = STATE_KEYS[parseInt(data[4])];
         modules[moduleID].online = true;
         updateClientData();
     })
 
     ws.on("close", () => {
+        if (!moduleID) return;
         console.log(`connection with ${moduleID} ended!!`)
 
         modules[moduleID].online = false;
