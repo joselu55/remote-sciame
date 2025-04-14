@@ -141,14 +141,16 @@ app.ws("/rtc/users", (ws, req) => {
                 const closedDoor = modules["pedrito"].closedDoor;
 
                 if (
-                    newState == "SWITCHING" && 
-                    currentState == "LOCKED" && 
+                    (newState == "SWITCHING") && 
+                    (currentState == "LOCKED") && 
                     openRequest &&
                     closedDoor
                 ) {
                     rtcModulesConnections["pedrito"].send("do switch");
                     console.log("UNLOCK MESSAGE SENDT!!");
                 } else {
+                    console.log("UNLOCK MESSAGE DENIED!!");
+                    console.log(modules);
                     ws.send(JSON.stringify({
                         subject: "update",
                         modules: modules
@@ -194,9 +196,10 @@ app.ws("/rtc/modules", (ws, req) => {
             return;
         }
         modules[moduleID].state = STATE_KEYS[parseInt(data[2])];
-        modules[moduleID].closedDoor = STATE_KEYS[parseInt(data[3])];
-        modules[moduleID].openRequest = STATE_KEYS[parseInt(data[4])];
+        modules[moduleID].closedDoor = parseInt(data[3]);
+        modules[moduleID].openRequest = parseInt(data[4]);
         modules[moduleID].online = true;
+        //console.log("MODULES updated: ", modules);
         updateClientData();
     })
 

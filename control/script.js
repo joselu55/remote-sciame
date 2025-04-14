@@ -26,6 +26,8 @@ lockSwitch.addEventListener("click", () => {
 });
 
 function updateUI() {
+    console.log("new data: ", modules);
+
     const online = modules["pedrito"].online;
     const closedDoor = modules["pedrito"].closedDoor;
     const openRequest = modules["pedrito"].openRequest;
@@ -59,6 +61,7 @@ function connectWebSocket() {
     ws.addEventListener("message", (event) => {
         console.log("Mensaje recibido!!");
         const data = JSON.parse(event.data);
+        console.log("new message: ", data);
         modules = data.modules;
         updateUI();
     });

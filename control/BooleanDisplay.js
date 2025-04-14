@@ -8,13 +8,15 @@ class BooleanDisplay extends HTMLElement {
     setTrue() {
         this.#value = true;
         this.textContent = "True";
+        this.style.color = "black";
         this.style.backgroundColor = "var(--color-success)";
     }
 
     setFalse() {
         this.#value = false;
         this.textContent = "False";
-        this.style.backgroundColor = "var(--color-disable)";
+        this.style.color = "white";
+        this.style.backgroundColor = "var(--color-danger)";
     }
 
     getValue() {
